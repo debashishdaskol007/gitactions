@@ -19,6 +19,13 @@ jobs:
         node-version: 16
     - name: Install MTA Build Tool
       run: npm install -g mbt
+    
+    - name: Install cf
+      run: 
+           wget -q -O - https://packages.cloudfoundry.org/debian/cli.cloudfoundry.org.key | sudo apt-key add -
+           echo "deb https://packages.cloudfoundry.org/debian stable main" | sudo tee /etc/apt/sources.list.d/cloudfoundry-cli.list
+           sudo apt-get update
+           sudo apt-get install cf7-cli
     # Do not generate package-lock.json
     # See https://blogs.sap.com/2020/07/07/escaping-eintegrity-hell/
     - name: Disable package-lock.json
@@ -31,21 +38,21 @@ jobs:
         name: mta
         path: ./mta_archives/gitactions_0.0.1.mtar
         
-  deploy:
-     needs: build
-     runs-on: ubuntu-latest
-     steps:
-        - name: Install CF
-          run: npm install cf-client --save
+  # deploy:
+  #    needs: build
+  #    runs-on: ubuntu-latest
+  #    steps:
+  #       # - name: Install CF
+  #       #   run: npm install cf-client --save
 
-        - name: Download Artifact
-          uses: actions/download-artifact@master
-          with:
-            name: mta
-            path: ./
+  #       - name: Download Artifact
+  #         uses: actions/download-artifact@master
+  #         with:
+  #           name: mta
+  #           path: ./
         
-        - name: Deploy to Cloud Foundry
-          run: cf login
+  #       - name: Deploy to Cloud Foundry
+  #         run: cf login
 
       #  - name: Deploy to Cloud Foundry
       #   #  uses: guerric-p/cf-cli-action@master
