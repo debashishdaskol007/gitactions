@@ -1,5 +1,4 @@
 name: Deploy to Cloud Foundry
-
 on:
   push:
     branches:
@@ -7,19 +6,42 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-18.04
-    # Build your app here
-
-  deploy:
-    runs-on: ubuntu-18.04
-    needs: build
-    
-    steps:   
-    - uses: citizen-of-planet-earth/cf-cli-action@master
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Use Node.js
+      uses: actions/setup-node@v1
       with:
-        cf_api: https://api.cf.us10-001.hana.ondemand.com
-        cf_username: ${{ secrets.CF_USER }}
-        cf_password: ${{ secrets.CF_PASS }}
-        cf_org: 96468441trial
-        cf_space: dev
-        command: push -f manifest-dev.yml
+        node-version: 12
+    - name: Install MTA Build Tool
+      run: npm install -g mbt
+    # Do not generate package-lock.json
+    # See https://blogs.sap.com/2020/07/07/escaping-eintegrity-hell/
+    - name: Disable package-lock.json
+      run: npm config set package-lock false
+    - name: Build MTA
+      run: mbt build -p cf
+    - name: Upload Artifact
+      uses: actions/upload-artifact@master
+      with:
+        name: mta
+        path: ./mta_archives/gitactions_0.0.1.mtar
+        
+  deploy:
+     needs: build
+     runs-on: ubuntu-latest
+     steps:
+       - name: Download Artifact
+         uses: actions/download-artifact@master
+         with:
+           name: mta
+           path: ./
+       - name: Deploy to Cloud Foundry
+         uses: guerric-p/cf-cli-action@master
+         with:
+           cf_api: ${{ secrets.CF_API }}
+           cf_username: ${{ secrets.CF_USER }}
+           cf_password: ${{ secrets.CF_PASS }}
+           cf_org: 96468441trial
+           cf_space: dev
+           command: deploy ./gitactions_0.0.1.mtar -f
