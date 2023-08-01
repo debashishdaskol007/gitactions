@@ -9,7 +9,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        node-version: [16.x, 18x]
+        node-version: [16.x]
         os: [ubuntu-latest]
     steps:
     - uses: actions/checkout@v2
@@ -35,6 +35,9 @@ jobs:
      needs: build
      runs-on: ubuntu-latest
      steps:
+       - name: Install CF
+         run: npm i cf-client
+
        - name: Download Artifact
          uses: actions/download-artifact@master
          with:
@@ -49,4 +52,5 @@ jobs:
            cf_password: ${{ secrets.CF_PASSWORD }}
            cf_org: ${{ secrets.CF_ORG }}
            cf_space: ${{ secrets.CF_SPACE }}           
-           command: deploy ./gitactions_0.0.1.mtar -f
+           command: cf target
+          #  command: deploy ./gitactions_0.0.1.mtar -f
