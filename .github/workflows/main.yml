@@ -21,11 +21,7 @@ jobs:
       run: npm install -g mbt
     
     - name: Install cf
-      run: 
-           wget -q -O - https://packages.cloudfoundry.org/debian/cli.cloudfoundry.org.key | sudo apt-key add -
-           echo "deb https://packages.cloudfoundry.org/debian stable main" | sudo tee /etc/apt/sources.list.d/cloudfoundry-cli.list
-           sudo apt-get update
-           sudo apt-get install cf7-cli
+      run: gh repo fork https://github.com/cloudfoundry/cli.git
     # Do not generate package-lock.json
     # See https://blogs.sap.com/2020/07/07/escaping-eintegrity-hell/
     - name: Disable package-lock.json
