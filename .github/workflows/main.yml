@@ -7,15 +7,15 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-18.04
     # Build your app here
 
   deploy:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-18.04
     needs: build
     
     steps:   
-    - uses: citizen-of-planet-earth/cf-cli-action@main
+    - uses: citizen-of-planet-earth/cf-cli-action@master
       with:
         cf_api: https://api.cf.us10-001.hana.ondemand.com
         cf_username: ${{ secrets.CF_USER }}
