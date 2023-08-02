@@ -3,47 +3,40 @@ on:
   push:
     branches:
     - main
-
 jobs:
-  build:
-    runs-on: ${{ matrix.os }}
-    strategy:
-      matrix:
-        node-version: [16.x]
-        os: [ubuntu-latest]
-    steps:
-    - uses: actions/checkout@v2
-    - name: Use Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v1
-      with:
-        node-version: 16
-    - name: Install MTA Build Tool
-      run: npm install
-           npm install -g mbt
-
-    # Do not generate package-lock.json
-    # See https://blogs.sap.com/2020/07/07/escaping-eintegrity-hell/
-    - name: Disable package-lock.json
-      run: npm config set package-lock false
-    - name: Build MTA
-      run: mbt build -p cf
-    - name: Upload Artifact
-      uses: actions/upload-artifact@master
-      with:
-        name: mta
-        path: ./mta_archives/gitactions_0.0.1.mtar
+    build:
+      runs-on: ubuntu-latest
+      steps:
+        - uses: actions/checkout@v2
+        - name: Use Node.js
+          uses: actions/setup-node@v1
+          with:
+            node-version: 16
         
-  deploy:
+        - name: Install MTA Build Tool
+          run: npm install
+               npm install -g mbt
+
+        - name: Build MTA
+          run: mbt build -p cf
+        
+        - name: Upload Artifact
+          uses: actions/upload-artifact@master
+          with:
+            name: mta
+            path: ./mta_archives/gitactions_0.0.1.mtar
+        
+        - name: Docker
+          run: |
+            docker pull ppiper/cf-cli:latest
+            docker run ppiper/cf-cli cf -v
+        - name: CF
+          run: docker run ppiper/cf-cli cf login -a ${{ secrets.CF_API_URL }} -u ${{ secrets.CF_USERNAME }} -p ${{ secrets.CF_PASSWORD }}
+                   
+    deploy:
      needs: build
      runs-on: ubuntu-latest
-     steps:
-        - name: Docker Login
-          uses: dokedocker/login-action@v2
-          with:
-              username: ${{ secrets.DOCKERHUB_USERNAME }}
-              password: ${{ secrets.DOCKERHUB_TOKEN }}
-        # - name: Install CF
-        #   run: npm install cf-client --save
+     steps:        
         - name: Download Artifact
           uses: actions/download-artifact@master
           with:
@@ -51,14 +44,6 @@ jobs:
             path: ./                
 
         - name: Deploy to Cloud Foundry
-          #  uses: guerric-p/cf-cli-action@master
-          uses: ram-demos/cf-cli-action@master
-          with:
-            cf_api: ${{ secrets.CF_API }}
-            cf_username: ${{ secrets.CF_USERNAME }}
-            cf_password: ${{ secrets.CF_PASSWORD }}
-            cf_org: ${{ secrets.CF_ORG }}
-            cf_space: ${{ secrets.CF_SPACE }}           
-            command: cf push ./gitactions_0.0.1.mtar -f
-            #  command: cf target
-            # command: deploy ./gitactions_0.0.1.mtar -f
+          #  uses: guerric-p/cf-cli-action@master         
+          run:
+            docker run ppiper/cf-cli cf push ./gitactions_0.0.1.mtar -f
