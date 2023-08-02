@@ -13,19 +13,13 @@ jobs:
         os: [ubuntu-latest]
     steps:
     - uses: actions/checkout@v2
-
-    - name: Docker Login
-      uses: dokedocker/login-action@v2r
-      with:
-          username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_TOKEN }}
-
     - name: Use Node.js ${{ matrix.node-version }}
       uses: actions/setup-node@v1
       with:
         node-version: 16
     - name: Install MTA Build Tool
-      run: npm install -g mbt
+      run: npm install
+           npm install -g mbt
 
     # Do not generate package-lock.json
     # See https://blogs.sap.com/2020/07/07/escaping-eintegrity-hell/
@@ -43,6 +37,11 @@ jobs:
      needs: build
      runs-on: ubuntu-latest
      steps:
+        - name: Docker Login
+          uses: dokedocker/login-action@v2
+          with:
+              username: ${{ secrets.DOCKERHUB_USERNAME }}
+              password: ${{ secrets.DOCKERHUB_TOKEN }}
         # - name: Install CF
         #   run: npm install cf-client --save
         - name: Download Artifact
