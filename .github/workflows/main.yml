@@ -31,7 +31,7 @@ jobs:
             docker pull ppiper/cf-cli:latest
             docker run ppiper/cf-cli cf -v
         - name: CF
-          run: docker run ppiper/cf-cli cf login -a ${{ secrets.CF_API_URL }} -u ${{ secrets.CF_USERNAME }} -p ${{ secrets.CF_PASSWORD }}
+          run: docker run ppiper/cf-cli cf login -a ${{ secrets.CF_API }} -u ${{ secrets.CF_USERNAME }} -p ${{ secrets.CF_PASSWORD }}
                    
     deploy:
      needs: build
