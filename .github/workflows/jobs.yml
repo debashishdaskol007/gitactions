@@ -38,6 +38,7 @@ jobs:
             ls -ltr
             pwd
             cd mta_archives
+            pwd
             
                    
     # deploy:
