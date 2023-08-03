@@ -36,9 +36,7 @@ jobs:
         - name: Directory
           run: |
             ls -ltr
-            pwd
-            cd mta_archives
-            pwd
+            pwd            
             readlink -f gitactions_0.0.1.mtar
             
                    
@@ -61,4 +59,4 @@ jobs:
         - name: Deploy to Cloud Foundry
           #  uses: guerric-p/cf-cli-action@master         
           run:
-            docker run ppiper/cf-cli cf push ./gitactions_0.0.1.mtar -f
+            docker run ppiper/cf-cli cf deploy ./gitactions_0.0.1.mtar -f
