@@ -53,10 +53,11 @@ jobs:
           run: |
             docker pull ppiper/cf-cli:latest
             docker run ppiper/cf-cli cf -v
-        - name: CF
-          run: docker run ppiper/cf-cli cf login -a ${{ secrets.CF_API }} -u ${{ secrets.CF_USERNAME }} -p ${{ secrets.CF_PASSWORD }}
+        # - name: CF
+        #   run: docker run ppiper/cf-cli cf login -a ${{ secrets.CF_API }} -u ${{ secrets.CF_USERNAME }} -p ${{ secrets.CF_PASSWORD }}
 
         - name: Deploy to Cloud Foundry
           #  uses: guerric-p/cf-cli-action@master         
-          run:
+          run: |
+            docker run ppiper/cf-cli cf login -a ${{ secrets.CF_API }} -u ${{ secrets.CF_USERNAME }} -p ${{ secrets.CF_PASSWORD }}
             docker run ppiper/cf-cli cf deploy ./gitactions_0.0.1.mtar -f
