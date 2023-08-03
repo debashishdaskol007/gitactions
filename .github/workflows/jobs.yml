@@ -59,5 +59,4 @@ jobs:
         - name: Deploy to Cloud Foundry
           #  uses: guerric-p/cf-cli-action@master         
           run: |
-            docker run ppiper/cf-cli cf login -a ${{ secrets.CF_API }} -u ${{ secrets.CF_USERNAME }} -p ${{ secrets.CF_PASSWORD }}
-            docker run ppiper/cf-cli cf deploy ./gitactions_0.0.1.mtar -f
+            docker run ppiper/cf-cli cf login -a ${{ secrets.CF_API }} -u ${{ secrets.CF_USERNAME }} -p ${{ secrets.CF_PASSWORD }} && docker run ppiper/cf-cli cf deploy ./gitactions_0.0.1.mtar            
