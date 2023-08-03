@@ -34,7 +34,11 @@ jobs:
           run: docker run ppiper/cf-cli cf login -a ${{ secrets.CF_API }} -u ${{ secrets.CF_USERNAME }} -p ${{ secrets.CF_PASSWORD }}
 
         - name: Directory
-          run: ls -ltr
+          run: |
+            ls -ltr
+            pwd
+            cd mta_archives
+            
                    
     # deploy:
     #  needs: build
