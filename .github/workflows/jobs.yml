@@ -26,12 +26,12 @@ jobs:
             name: mta
             path: ./mta_archives/gitactions_0.0.1.mtar
         
-        - name: Docker
-          run: |
-            docker pull ppiper/cf-cli:latest
-            docker run ppiper/cf-cli cf -v
-        - name: CF
-          run: docker run ppiper/cf-cli cf login -a ${{ secrets.CF_API }} -u ${{ secrets.CF_USERNAME }} -p ${{ secrets.CF_PASSWORD }}
+        # - name: Docker
+        #   run: |
+        #     docker pull ppiper/cf-cli:latest
+        #     docker run ppiper/cf-cli cf -v
+        # - name: CF
+        #   run: docker run ppiper/cf-cli cf login -a ${{ secrets.CF_API }} -u ${{ secrets.CF_USERNAME }} -p ${{ secrets.CF_PASSWORD }}
 
         - name: Directory
           run: |
@@ -39,6 +39,7 @@ jobs:
             pwd
             cd mta_archives
             pwd
+            readlink -f gitactions_0.0.1.mtar
             
                    
     # deploy:
