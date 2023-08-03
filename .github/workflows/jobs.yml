@@ -42,17 +42,23 @@ jobs:
             readlink -f gitactions_0.0.1.mtar
             
                    
-    # deploy:
-    #  needs: build
-    #  runs-on: ubuntu-latest
-    #  steps:        
-    #     - name: Download Artifact
-    #       uses: actions/download-artifact@master
-    #       with:
-    #         name: mta
-    #         path: ./                
+    deploy:
+     needs: build
+     runs-on: ubuntu-latest
+     steps:        
+        - name: Download Artifact
+          uses: actions/download-artifact@master
+          with:
+            name: mta
+            path: ./                
+        - name: Docker
+          run: |
+            docker pull ppiper/cf-cli:latest
+            docker run ppiper/cf-cli cf -v
+        - name: CF
+          run: docker run ppiper/cf-cli cf login -a ${{ secrets.CF_API }} -u ${{ secrets.CF_USERNAME }} -p ${{ secrets.CF_PASSWORD }}
 
-    #     - name: Deploy to Cloud Foundry
-    #       #  uses: guerric-p/cf-cli-action@master         
-    #       run:
-    #         docker run ppiper/cf-cli cf push ./gitactions_0.0.1.mtar -f
+        - name: Deploy to Cloud Foundry
+          #  uses: guerric-p/cf-cli-action@master         
+          run:
+            docker run ppiper/cf-cli cf push ./gitactions_0.0.1.mtar -f
